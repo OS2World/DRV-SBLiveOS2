@@ -1,0 +1,90 @@
+# $Id: makefile.os2,v 1.3 2000/04/26 18:00:57 sandervl Exp $
+#******************************************************************************
+# makefile for the SoundBlaster Live! OS/2 audio project
+#
+# Copyright 2000 Sander van Leeuwen (sandervl@xs4all.nl)
+#
+#     This program is free software; you can redistribute it and/or
+#     modify it under the terms of the GNU General Public License as
+#     published by the Free Software Foundation; either version 2 of
+#     the License, or (at your option) any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public
+#     License along with this program; if not, write to the Free
+#     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+#     USA.
+#
+#******************************************************************************
+#           
+#  To build a debug version:
+#      WMAKE -f makefile.os2 DEBUG=1 /ms
+#
+#  To build the KEE enhanced debug version of the 32 bits driver:
+#      WMAKE -f makefile.os2 DEBUG=1 KEE=1 /ms
+#
+#  To build a fully optimized release version:
+#      WMAKE -f makefile.os2 /ms
+#
+#  To build the KEE enhanced release version of the 32 bits driver:
+#      WMAKE -f makefile.os2 KEE=1 /ms
+#
+#
+
+NMAKEOPTS=-f makefile.os2
+
+!if "$(DEBUG)" == "1"
+NMAKEOPTS=$(NMAKEOPTS) DEBUG=1
+!endif
+
+!if "$(KEE)" == "1"
+NMAKEOPTS=$(NMAKEOPTS) KEE=1
+!endif
+
+!if "$(DEBUG)" == "1"
+!Message BUILDING DEBUG VERSION
+!else
+!Message BUILDING RELEASE VERSION
+!endif
+
+ALL:	cardinfo.dll runtime.lib linuxlib.lib sblive32.lib sblive16.sys sblive32.sys
+
+cardinfo.dll:
+	@echo BUILDING CARDINFO.DLL
+	@cd Install
+	@nmake $(NMAKEOPTS)
+	@cd ..
+
+runtime.lib:
+	@echo BUILDING runtime.lib
+	@cd runtime
+	@wmake $(NMAKEOPTS)
+	@cd ..
+
+linuxlib.lib:
+	@echo BUILDING linuxlib.lib
+	@cd lib32
+	@wmake /ms $(NMAKEOPTS)
+	@cd ..
+
+sblive32.lib:
+	@echo BUILDING sblive32.lib
+	@cd sblive
+	@wmake /ms $(NMAKEOPTS)
+	@cd ..
+
+sblive16.sys:
+	@echo BUILDING sblive16.sys
+	@cd drv16
+	@wmake $(NMAKEOPTS)
+	@cd ..
+
+sblive32.sys:
+	@echo BUILDING sblive32.sys
+	@cd drv32
+	@wmake /ms $(NMAKEOPTS)
+	@cd ..

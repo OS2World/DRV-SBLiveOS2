@@ -1,0 +1,110 @@
+#******************************************************************************
+# Makefile for 32 bits OS/2 SB Live driver
+#
+# Copyright 2000 Sander van Leeuwen (sandervl@xs4all.nl)
+#
+#     This program is free software; you can redistribute it and/or
+#     modify it under the terms of the GNU General Public License as
+#     published by the Free Software Foundation; either version 2 of
+#     the License, or (at your option) any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public
+#     License along with this program; if not, write to the Free
+#     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+#     USA.
+#
+#******************************************************************************
+.ERASE
+
+.SUFFIXES:
+.SUFFIXES: .sys .obj .asm .inc .def .lrf .ref .lst .sym .map .c .cpp .h .lib
+
+!include ..\include\version.mak
+
+CINCLUDES = .;$(%WATCOM)\H;..\runtime;..\include;$(%DDK)\base\h
+AINCLUDES = -I:$(%DDK)\BASE\INC
+
+LNKFILE = $(OBJDIR)\sblive32.lrf
+
+EVERYTHING_AS_CPP=1
+32BIT=1
+!include ..\makefile.inc
+!include ..\include\sblive32.mak
+
+#===================================================================
+#
+#   List of source files
+#
+#===================================================================
+FILEFIRST= startup.obj
+FILE2    = strategy.obj
+FILE3    = init.obj
+FILE4    = devhlp.obj
+FILE5    = idc.obj dispatch.obj
+FILE6    = impdos.lib
+!if "$(KEE)" == "1"
+FILE7    = impkee.lib
+!endif
+FILE8    = impmvdm.lib
+FILELAST = end.obj
+FILES    = $(FILEFIRST) $(FILE0) $(FILE1) $(FILE2) $(FILE3) $(FILE4) $(FILE5) $(FILE6) $(FILE7) $(FILE8) $(FILE9) $(FILELAST)
+
+TARGET   = sblive32
+WMAPNAME = $(OBJDIR)\sblive32.wmap
+
+
+
+#===================================================================
+#
+#   Specific dependencies
+#
+#===================================================================
+all: $(OBJDIR)\$(TARGET).sys $(OBJDIR)\$(TARGET).sym
+
+$(LNKFILE): makefile.os2 ..\include\version.mak
+    @%write $^@ option quiet
+    @%write $^@ option verbose
+    @%write $^@ option caseexact
+    @%write $^@ option cache
+    @%write $^@ option alignment=16
+    @%write $^@ option map=$(WMAPNAME)
+    @%write $^@ option description '@$#$(_VENDOR):$(_VERSION)$#@'
+    @%write $^@ name $(OBJDIR)\$(TARGET).sys
+    @for %f in ($(FILES)) do @%append $^@ file $(OBJDIR)\%f
+    @%write $^@ import DOSIODELAYCNT DOSCALLS.427
+!if "$(KEE)" == "1"
+    @%write $^@ library $(SBLIVE_LIB)\sblive32kee.lib 
+    @%write $^@ library $(SBLIVE_LIB)\linuxlibkee.lib
+!else
+    @%write $^@ library $(SBLIVE_LIB)\sblive32.lib 
+    @%write $^@ library $(SBLIVE_LIB)\linuxlib.lib
+!endif
+    @%write $^@ library $(%WATCOM)\lib386\os2\clib3r.lib
+
+$(OBJDIR)\$(TARGET).sys: $(LNKFILE) $(FILES)
+     $(LINK) @$(LNKFILE)
+     copy $(OBJDIR)\$(TARGET).sys $(SBLIVE_BIN)
+!ifdef KEE
+     copy $(OBJDIR)\$(TARGET).sys $(SBLIVE_BIN)\$(TARGET)kee.sys
+     copy $(OBJDIR)\$(TARGET).sys $(SBLIVE_BIN_)\$(TARGET)kee.sys
+!else
+     copy $(OBJDIR)\$(TARGET).sys $(SBLIVE_BIN)\$(TARGET)w4.sys
+     copy $(OBJDIR)\$(TARGET).sys $(SBLIVE_BIN_)\$(TARGET)w4.sys
+!endif
+
+$(OBJDIR)\$(TARGET).sym: $(WMAPNAME)
+     $(WAT2MAP) $(WMAPNAME) $(OBJDIR)\$(TARGET).MAP
+     cd $(OBJDIR)
+     mapsym $(TARGET).MAP
+     cd ..\..
+     copy $(OBJDIR)\$(TARGET).sym $(SBLIVE_BIN)
+
+clean:
+     cd $(OBJDIR)
+     del *.obj *.err *.lnk *.sys *.sym *.lst *.map *.wmap *.lib
+     cd ..

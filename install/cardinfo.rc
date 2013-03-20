@@ -1,0 +1,124 @@
+/* $Id: cardinfo.rc,v 1.1 2000/04/23 14:55:35 ktk Exp $ */
+
+//******************************************************************************
+// Installation resource script for SB Live OS/2 MMPM/2 driver
+//
+// Copyright 2000 Sander van Leeuwen (sandervl@xs4all.nl)
+//
+//     This program is free software; you can redistribute it and/or
+//     modify it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation; either version 2 of
+//     the License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public
+//     License along with this program; if not, write to the Free
+//     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+//     USA.
+//
+//******************************************************************************
+#include <sbvsd.h>
+#include <sbversion.h>
+
+RCDATA 1
+BEGIN
+   "1"                          /* Number of adapters in this rc file      */
+END
+
+RCDATA 10
+BEGIN
+   SB_LIVE_ID,                  /* ID number of this adapter                */
+   ""                           /* Type of adapter - use audiovdd if        */
+                                /* you use the IBM audiovdd.sys driver      */
+END
+
+RCDATA 11
+BEGIN
+   "1",                        /* Max number of adapters (2 chars)           */
+   "audhelp.HLP",              /* Helpfile name (19 chars)                   */
+   "",                         /* Adapter specific dll name (19 chars)       */
+   "",                         /* Adapter specific dll entry point (39 chars)*/
+
+   /**** Data for CONFIG.SYS **/
+   "2",                        /* Number of CONFIG.SYS lines (1 char)        */
+   "DEVICE=*PATH*\\SBLIVE32.SYS",
+   "DEVICE=*PATH*\\SBLIVE16.SYS /V /C", /* enable CD by default */
+
+   /**** Data for INI File ****/
+   "2",                        /* Number of Drivers to Install (1 char)      */
+   "SoundBlaster Live! Wave Audio",  /* Product name (39 chars)                   */
+   SBLIVE_VERSION,             /* Version of the adapter's software (5 chars)*/
+   "SBLIVE",                   /* PDD Name  (6 chars)                        */
+   "MDM",                      /* MCD table name (19 chars)                  */
+   "\0"                        /* VSD table name (19 chars)                  */
+END
+
+RCDATA 12
+BEGIN
+   /**** WAVEAUDIO Driver ****/
+   "SBLIVEWAVE"                /* Installname (17 chars)                     */
+   "7",                        /* Device type (3 chars)                      */
+   "1",                        /* Device flag (3 chars)                      */
+   "AUDIOMCD",                 /* MCD driver name (19 chars)                 */
+   "AUDIOIF",                  /* VSD driver name (19 chars)                 */
+   "3",                        /* Share Type (3 chars)                       */
+   "SBLiveWave",               /* Resource name (17 chars)                   */
+   "33",                       /* # of Resource units (2 chars)              */
+   "2",                        /* # of Resource classes (2 chars)            */
+   "32","1"                    /* Resource classes (2 char each)             */
+   "2",                        /* # Valid resource class combos (2 chars)    */
+   "1","2",                    /* Valid resource class combos (2 chars each) */
+   "2","1",
+   "1",                        /* # of connectors (2 chars)                  */
+   "3","SBLIVEAMPMIX","1",        /* Connectors (2 chars), (17 chars), (2 chars)*/
+   "1",                        /* # of extensions (2 chars)                  */
+   "WAV",                      /* Extension names (3 chars each)             */
+   "Digital Audio",            /* Extended attribute (255 chars)             */
+   "Digital Audio",            /* Alias Name (17 chars)                      */
+   "FORMAT=1,SAMPRATE=22050,BPS=8,CHANNELS=1,DIRECTION=PLAY"
+                               /* Device Specific Parameters (255 chars)     */
+END
+
+RCDATA 13
+BEGIN
+   /**** AMPMIXER Driver *****/
+   "SBLIVEAMPMIX"              /* Installname (17 chars)                     */
+   "9",                        /* Device type (3 chars)                      */
+   "2",                        /* Device flag (3 chars)                      */
+   "AMPMXMCD",                 /* MCD driver name (19 chars)                 */
+   "AUDIOIF",                  /* VSD driver name (19 chars)                 */
+   "3",                        /* Share Type (3 chars)                       */
+   "SBLiveAmpMixer",           /* Resource name (17 chars)                   */
+   "33",                       /* # of Resource units (2 chars)              */
+   "2",                        /* # of Resource classes (2 chars)            */
+   "32","1"                    /* Resource classes (2 char each)             */
+   "2",                        /* # Valid resource class combos (2 chars)    */
+   "1","2",                    /* Valid resource class combos (2 chars each) */
+   "2","1",
+   "5",                        /* # of connectors (2 chars)                  */
+   "4", "\0", "0",             /* Connectors (2 chars), (17 chars), (2 chars)*/
+   "9", "\0", "0",
+   "8", "\0", "0",
+   "10","\0", "0",
+   "7", "\0", "0",
+   "0",                        /* # of extensions  (2 chars)                 */
+   /* no extension names */    /* Extension names  (3 chars each)            */
+   "\0",                       /* Extended attribute (255 chars)             */
+   "\0",                       /* Alias Name (17 chars)                      */
+   "BALANCE=50,VOL=100,INPUT=LINE,GAIN=70,OUTPUT=SPEAKER"
+                               /* Device Parms (255 chars)                   */
+END
+
+RCDATA 19
+BEGIN
+   // Prompts for the User
+   "0",                        /* Number of prompts to ask user (2 chars)    */
+                               /* (max 10 prompts)                           */
+END
+
+
+

@@ -1,0 +1,203 @@
+            SoundBlaster Live! OS/2 Audiotreiber Version 0.81 (beta)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Inhalt
+======
+1.   Beschreibung
+2.   Ausstattungsmerkmale
+3.   Entwicklungsgeschichte
+4.   Vorraussetzungen
+5.   Installation/Deinstallation
+6.   CONFIG.SYS Optionen
+7.   Bekannte Probleme
+8.   Liste der Dateien
+9.   Quellcode
+10.  Mitteilungen an den Autor
+10.1 SoundBlaster Live OS/2 Mailingliste
+11.  GewÑhrleistung
+
+
+1. Beschreibung
+===============
+Dies eine Portierung des Open Source SoundBlaster Live Treibers von
+Creative Labs fÅr Linux.
+Obwohl der Treiber im Prinzip alle Merkmale komplett implementiert,
+sollte man ihn dennoch als Betasoftware betrachten. (Siehe GewÑhrleistung)
+
+Die Entwicklung dieses Treiber wÑre ohne die UnterstÅtzung von Creative Labs 
+und den aktuellen Verwaltern des Treibers fÅr Linux nicht mîglich gewesen.
+
+
+2. Ausstattungsmerkmale
+=======================
+- Bis zu 32 simultane Waveaudio WiedergabekanÑle
+- Ein Aufnahmekanal fÅr Waveaudio
+- Gleichzeitige Aufnahme und Wiedergabe
+- UnterstÅtzung der IOCTL90 Mixer Schnittstelle (Entwickelt von Joe Nord bei
+  Crystal Semiconductor und werden von den Crystal OS/2 Audiotreiber verwendet)
+- RTMIDI Aufnahme & Wiedergabe
+
+
+3. Entwicklungsgeschichte
+=========================
+0.60
+- Fehler im "video mixer control" behoben
+- AusgabelautstÑrke fÅr Waveaudio geÑndert
+- KlickgerÑusche beim Abspielen von Wave-Dateien Åber grosse Audiospeicher  
+  behoben.
+
+0.50
+- RTMIDI Aufnahme & Widergabe (MPU401) hinzugefÅgt
+- Manuelles finden der SB Live! Hardware
+- TRAP D beim beginnen der Aufnahme/Wiedergabe behoben
+
+0.25
+- Erste îffentliche Beta Version
+
+
+4. Vorraussetzungen
+===================
+- OS/2 Warp 4 oder Warp Server for e-Business
+  (Warp 3 nicht getestet)
+- Creative Labs SoundBlaster Live! oder
+  Creative Labs SoundBlaster PCI soundcard
+
+
+5. Installation/Deinstallation
+==============================
+Folgende Schritte sind zur Installation des SB Live Treiber nîtig:
+- Entpackend des Archives
+- AusfÅhren von install.cmd
+- 'SoundBlaster Live! Wave Audio' auswÑhlen und mit der Installation 
+  fortfahren. 
+- Starten Sie den Rechner neu.
+
+Zur Deinstallation des SB Live Treibers gehen Sie genau so vor wie oben
+beschrieben, geben aber Null Karten an wenn das Installationsprogramm
+nach der Anzahl der Karten im System fragt.
+
+6. CONFIG.SYS Optionen
+======================
+DEVICE=J:\MMOS2\SBLIVE16.SYS /V /C /M /L
+- /V: verbose (Ausgabe des Copyrights wÑhrend des Bootens)
+- /C: Den CD Audio Eingang aktivieren
+- /M: Den Mikrophone Eingang aktivieren
+- /L: Den Linein Eingang aktivieren
+
+DEVICE=J:\MMOS2\SBLIVE32.SYS /D
+- /D: Ausgabe der Start und Endaddresse des Treibers
+      (Sinnvoll um bei AbstÅrzen den schuldigen Treiber zu ermitteln 
+       (CS:EIP im Trapscreen))
+
+Die Installation setzt die Verbose und CD Optionen im CONFIG.SYS Eintrag
+
+
+7. Bekannte Probleme
+====================
+- Einige Anwender haben berichtet das es unter UmstÑnden vorkommt,  
+  dass Programme manchmal nach einiger Zeit keine Audiowiedergabe mehr
+  vornehmen kînnen. (unable to load MDM.DLL). Dies kommt scheinbar vor,  
+  (Neustart des System notwendig), aber der Autor war nicht in der Lage 
+  diesen Fehler bei sich zu Reproduzieren.
+  Falls Sie einen sicheren Weg finden diese Fehler zu Reproduzieren, 
+  benachrichtigen Sie bitte den Autor. (Siehe Sektion 9)
+- Geringe TonverfÑlschungen bei der Aufnahme mit 44kHz und 16 Bit in Stereo
+- Absturz den in PMMERGE bei der Installation auf einem System mit einem 
+  GRADD basierten Grafikkarentreiber (z.B. dem Scitech Displaydoctor).
+  Um dies zu Umgehen verschieben Sie nach der Auswahl des Treiber das
+  Programmfenster rechts fast ganz aus dem Bildschirm und drÅcken dann Enter.
+- Kein Ton durch inaktive Soundkarten Treiber in MMOS2\MMPM2.INI.
+  Um diese Problem zu beheben deinstallieren Sie bitte den SB Live und ihren 
+  alten Audiotreibr driver.
+  Sie kînnen ihren alten Audiotreiber auch manuell entfernen:
+        - deinstallieren Sie den SB Live Treiber
+        - Editieren Sie die MMOS2\MMPM2.INI Datei
+               - Suchen Sie nach dem 'Waveaudio=' Eintrag und lîschen alle
+                 Namen in der Zeile
+               - Suchen Sie nach dem 'Ampmix=' Eintrag und lîschen alle
+                 Namen in der Zeile
+                 (Ergebnis: Waveaudio=
+                            Ampmix= 
+                 )
+        - Installieren Sie erneut den SB Live Treiber
+          In der Datei MMOS2\MMPM2.INI Sollte nun folgendes stehen:
+                 Waveaudio=SBLIVEWAVE01
+                 Ampmix=SBLIVEAMPMIX01
+        - Starten Sie den Rechner neu
+
+8. Liste der Dateien
+====================
+Zur Installation benîtiget Dateien:
+	audfiles.scr
+	audplay.ico
+	AUDHELP.HLP
+	CARDINFO.dll
+	control.scr
+	midiplay.ico
+	vidplay.ico
+
+16 Bit MMPM/2 Audiotreiber:
+	sblive16.sys
+
+32 Bit SB Live Kern Audiotreiber:
+	sblive32w4.sys
+
+32 Bit SB Live KernAudiotreiber: 
+(Verwendet das neue KEE API, das abWarp 4 + Fixpack 13 oder Warp Server for 
+ e-Business vorhanden ist) 
+	sblive32kee.sys
+
+
+9. Quellcode
+============
+Da dieser Treiber auf dem Open Source Soundblaster Treiber fÅr Linux basiert,
+ist der Quellcode gemÑss der GNU LIBRARY GENERAL PUBLIC LICENSE verfÅgbar.
+Das CVS Repository befindet sich auf dem Netl@bs server:
+	set CVSROOT=:pserver:guest@www.netlabs.org:d:/netlabs.src/sbliveos2
+	set USER=guest
+
+Anmelden als 'guest' mit dem Passwort 'readonly'.
+
+
+10. Mitteilungen an den Autor
+=============================
+Wenn Sie einen Fehler in dem Treiber finden, Kînnen Sie den Autor
+per Email unter 
+  sandervl@xs4all.nl 
+erreichen.
+Fehlerreports solten die folgenden Information beinhalten:
+- SoundBlaster Live Model
+- OS/2 Version und Nummer des installierten Fixpacks
+- Beschreibung der Vorgehensweise zur Reproduktion des Fehlers
+- Die Trap Beschreibung (Registerinhalt) Falls sie einen Absturz melden,
+  fÅgen Sie die /D Option dem sblive32.sys Eintag in der CONFIG.SYS hinzu
+  und schreiben Sie die ausgegeben Start- und Endaddresse des Treibers
+  wÑhrend des bootens auf.
+
+Bitte bedenken Sie, dass der Autor nicht zu Problemen, die nicht offensichtlich
+vom Treiber herrÅhren, benachrichtigt werden mîchte. FÅr allgemeine Fragen zum
+Treiber gibt es eine Mailingliste auf egroups.com (siehe 10.1).
+
+Senden Sie auch NICHT eine Mail an die Autoren des Linux Treibers wegen Problemen
+mit dem OS/2 Treiber.
+Falls es sich Herausstellt, dass ein Problem in dem Treiber auf einen Fehler
+in ihrem Quellcode beruht wird der Autor sie Selbst benachrichtigen.
+
+
+10.1 SoundBlaster Live OS/2 Mailingliste
+========================================
+Es gibt eine Mailingliste auf yahoogroups.com die sich mit dem
+SB Live Audiotreiber fÅr OS/2 beschÑftigt.
+Zum abonieren der Mailingliste gehen Sie zu www.yahoogroups.com 
+und schreiben sie sich in der Gruppe sbliveos2@yahoogroups.com ein.
+
+
+11 GewÑhrleistung
+=================
+EXCEPT AS OTHERWISE RESTRICTED BY LAW, THIS WORK IS PROVIDED
+WITHOUT ANY EXPRESSED OR IMPLIED WARRANTIES OF ANY KIND, INCLUDING
+BUT NOT LIMITED TO, ANY IMPLIED WARRANTIES OF FITNESS FOR A
+PARTICULAR PURPOSE, MERCHANTABILITY OR TITLE.  EXCEPT AS
+OTHERWISE PROVIDED BY LAW, NO AUTHOR, COPYRIGHT HOLDER OR
+LICENSOR SHALL BE LIABLE TO YOU FOR DAMAGES OF ANY KIND, EVEN IF 
+THEY HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.

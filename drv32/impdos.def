@@ -1,0 +1,60 @@
+;/************************************************************************\
+;**                                                                      **
+;**               OS/2(r) Physical Device Driver Libraries               **
+;**                         for Watcom C/C++ 10                          **
+;**                                                                      **
+;**  COPYRIGHT:                                                          **
+;**                                                                      **
+;**    (C) Copyright Advanced Gravis Computer Technology Ltd 1994.       **
+;**        All Rights Reserved.                                          **
+;**                                                                      **
+;**  DISCLAIMER OF WARRANTIES:                                           **
+;**                                                                      **
+;**    The following [enclosed] code is provided to you "AS IS",         **
+;**    without warranty of any kind.  You have a royalty-free right to   **
+;**    use, modify, reproduce and distribute the following code (and/or  **
+;**    any modified version) provided that you agree that Advanced       **
+;**    Gravis has no warranty obligations and shall not be liable for    **
+;**    any damages arising out of your use of this code, even if they    **
+;**    have been advised of the possibility of such damages.  This       **
+;**    Copyright statement and Disclaimer of Warranties may not be       **
+;**    removed.                                                          **
+;**                                                                      **
+;\************************************************************************/
+
+
+;; ImpDos.def
+;;
+;; Export/import information for DOS* APIs callable at Init time.
+;;
+;; History:
+;;
+;; Sep 30, 94  David Bollo         Initial version
+;; Jan 22, 97  Sander van Leeuwen  Added DOSFLATCS & DOSFLATDS
+
+LIBRARY DOSCALLS
+
+EXPORTS
+    DOSBEEP                   @50
+    DOSCHGFILEPTR             @58
+    DOSCLOSE                  @59
+    DOSOPEN                   @70
+    DOSDELETE                 @60
+    DOSDEVCONFIG              @52
+    DOSDEVIOCTL               @53
+    DOSFINDCLOSE              @63
+    DOSFINDFIRST              @64
+    DOSFINDNEXT               @65
+    DOSGETENV                 @91
+    DOSGETHUGESHIFT           @41
+    DOSGETMACHINEMODE         @49
+    DOSGETVERSION             @92
+    DOSQCURDIR                @71
+    DOSQCURDISK               @72
+    DOSQFILEINFO              @74
+    DOSQFILEMODE              @75
+    DOSREAD                   @137
+    DOSWRITE                  @138
+    DOS32FLATDS               @370
+    DOS32FLATCS               @369
+    DOSIODELAYCNT             @427

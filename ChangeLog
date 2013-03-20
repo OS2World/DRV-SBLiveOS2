@@ -1,0 +1,111 @@
+$Id: ChangeLog,v 1.22 2001/12/20 19:57:41 sandervl Exp $ 
+
+ 2001-12-20: Sander van Leeuwen <sandervl@xs4all.nl>
+        - lib32:  fixed bug in __udelay
+
+ 2001-10-08: Sander van Leeuwen <sandervl@xs4all.nl>
+        - sblive: change for master volume; let it update the ac97
+                  registers
+
+ 2001-09-28: Sander van Leeuwen <sandervl@xs4all.nl>
+        - DRV16: DAC mixer control added (for LBMix)
+
+ 2001-09-28: Ruediger Ihle
+        - DRV16: Aux config.sys flag added
+                 Warp 3 DART now works
+        - LIB32: Aux volume control fixed
+
+ 2001-09-09: Sander van Leeuwen <sandervl@xs4all.nl>
+        - DRV16: Put back joystick code
+
+ 2001-09-09: Ruediger Ihle
+        - DRV16: Workaround added for MMPM/2 device share bug
+                 Fix for NULL buffers
+
+ 2001-05-24: Sander van Leeuwen <sandervl@xs4all.nl>
+        - makefiles: Wrong flag for WLIB in debug mode
+                     (reported by Ruediger Ihle)
+
+ 2001-05-12: Sander van Leeuwen <sandervl@xs4all.nl>
+        - DRV32: Align stack at dword boundary for performance reasons (idc handler)
+                 (reported by Ruediger Ihle)
+
+ 2001-04-30: Sander van Leeuwen <sandervl@xs4all.nl>
+        - DRV16: DirectAudio interface updates
+
+ 2001-04-16: Sander van Leeuwen <sandervl@xs4all.nl>
+        - DRV16: Fail to load if resource manager returned error while
+                 allocating resources.
+                 (prevents SB Live driver from allocating irq when the (e.g.) 
+                  the USB driver has already claimed exclusive access)
+
+ 2001-04-14: Sander van Leeuwen <sandervl@xs4all.nl>
+        - *: makefile updates
+             You must run Configure.cmd before building the driver
+        - sblive: compile fixes
+
+ 2001-03-23: Sander van Leeuwen <sandervl@xs4all.nl>
+        - drv16: Updates & bugfixes for DirectAudio interface
+
+ 2001-03-22: Sander van Leeuwen <sandervl@xs4all.nl>
+        - drv16: New direct audio interface added.
+
+ 2001-03-20: Sander van Leeuwen <sandervl@xs4all.nl>
+        - drv16: Remember old position when pausing & resuming stream
+
+ 2001-03-13: Sander van Leeuwen <sandervl@xs4all.nl>
+        - drv16: Do not turn on interrupts when not servicing the interrupt
+
+ 2000-10-28: Sander van Leeuwen <sandervl@xs4all.nl>
+        - makefiles: fixed makefiles for /ms wmake option is no longer required
+        - install: wrong resource class combination confuses MMPM/2; fixed
+
+ 2000-09-06: Sander van Leeuwen <sandervl@xs4all.nl>
+        - drv16: ProcessEvents; check all events, not only the first one
+
+ 2000-08-26: Sander van Leeuwen <sandervl@xs4all.nl>
+        - Print joystick port during init + register joystick device + it's resources
+
+ 2000-08-20: Sander van Leeuwen <sandervl@xs4all.nl>
+        - PCI detection fix
+
+ 2000-08-05: Sander van Leeuwen <sandervl@xs4all.nl>
+        - Volume table update (sblive\mixer.c)
+
+ 2000-07-23: Sander van Leeuwen <sandervl@xs4all.nl>
+        - Fix for video volume (missing from include\linux\soundcard.h)
+
+ 2000-07-18: Sander van Leeuwen <sandervl@xs4all.nl>
+        - Changed volume levels (smoother decrease of volume)
+        - Changed buffer logic. Request space left in dma buffer once and
+          fill that up.
+
+ 2000-07-13: Sander van Leeuwen <sandervl@xs4all.nl>
+        - Added different levels of debug logging (dprintf2/3/4)
+
+ 2000-06-19: Sander van Leeuwen <sandervl@xs4all.nl>
+        - Added configuration output in 16 bits driver
+        - Check for 0 size in memcopy Linux apis (fixed trap d on some machines)
+        - Added extra checks for null pointers, fixed null pointer check
+          in drv16\ossidc16.cpp (IDC16_MALLOC)
+
+ 2000-05-20: Sander van Leeuwen <sandervl@xs4all.nl>
+	- Added RTMIDI support
+
+ 2000-05-18: Sander van Leeuwen <sandervl@xs4all.nl>
+	- Added /D debug option for sblive32.sys (prints code start + end address)
+
+ 2000-05-15: Sander van Leeuwen <sandervl@xs4all.nl>
+	- Replaced Resource Manager detection with manual PCI detection
+
+ 2000-04-28: Sander van Leeuwen <sandervl@xs4all.nl>
+	- Added build instructions document
+
+ 2000-04-26: Sander van Leeuwen <sandervl@xs4all.nl>
+	- Beta release 0.25
+
+ 2000-04-24: Sander van Leeuwen <sandervl@xs4all.nl>
+	- Fixed wave volume, recording gain + wave recording
+
+ 2000-04-23: Sander van Leeuwen <sandervl@xs4all.nl>
+        - Created repository

@@ -1,0 +1,4 @@
+LIBRARY CARDINFO
+DESCRIPTION 'SoundBlaster Live! Installation dll'
+STUB 'OS2STUB.EXE'
+DATA NONE

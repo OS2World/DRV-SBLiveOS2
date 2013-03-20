@@ -1,0 +1,165 @@
+/* $Id: Build.txt,v 1.5 2001/09/28 12:12:51 sandervl Exp $ */
+          SoundBlaster Live! OS/2 Audio driver Build Instructions 
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Contents
+========
+1 Introduction
+2 Required tools
+3 Recommended tools for debugging
+4 Building the driver
+5 SBLive driver architecture
+6 Difference between the two kinds of 32 bits drivers
+
+1 Introduction
+==============
+This document lists all the needed tools and compilers to build the SB Live
+OS/2 audio driver.
+It also tries to give some information about the architecture of the driver
+and explain some technical details.
+
+However, it does not attempt to explain everything. People that are not
+familiar with either device drivers or MMPM/2 audio drivers should
+read the PDD & MMPM/2 driver references. Although those two documents
+are not meant for beginners, they do contain a lot of very useful information.
+
+You can always email me (sandervl@xs4all.nl) if you wish to help out with the 
+development of the driver and have some questions.
+Please make sure you've read at least the pdd & mmpm2 references and try
+to understand the source code before doing so.
+
+
+2 Required tools
+================
+- Watcom C/C++ version 11.0b
+- ALP 4.x (IBM assembler; comes with ddk)
+- IBM OS/2 DDK (http://service.boulder.ibm.com/ddk/)
+  - Base headers/libraries/tools (combase.zip)
+    Due to a typo in devhelp.h, you must change the DevHelp_VMProcessToGlobal macro:
+     USHORT DevHelp_VMProcessToGlobal(ULONG Flags, LIN LinearAddr, ULONG Length, PLIN GlobalLinearAddr);
+     #pragma aux DevHelp_ProcessToGlobal = \
+    to 
+     USHORT DevHelp_VMProcessToGlobal(ULONG Flags, LIN LinearAddr, ULONG Length, PLIN GlobalLinearAddr);
+     #pragma aux DevHelp_VMProcessToGlobal = \
+
+  - MMPM/2 base                  (mmpmdd.zip)
+  - PDD & MMPM/2 driver reference
+
+3 Recommended tools for debugging
+=================================
+- ICAT debugger (follow link from IBM DDK page)
+- OS/2 Debug kernel
+
+
+4 Building the driver
+=====================
+First you must create the makefile.inc file. This is done by running
+the Configure.cmd rexx script.
+
+You can build the driver from the main directory by executing:
+      WMAKE -f makefile.os2 /ms
+
+To build the debug version of the driver (which can be used with ICAT
+for source-level debugging) run
+      WMAKE -f makefile.os2 DEBUG=1 /ms
+
+To build the KEE enhanced version of the driver 
+      WMAKE -f makefile.os2 KEE=1 /ms
+
+
+5 SBLive driver architecture
+============================
+Simplified overview of the flow of control from a multimedia application
+to the SB Live driver. (for a more complete overview, check the MMPM/2
+Device Driver Reference; Audio Physical Device Driver Template/PDD architecture)
+
+              |=============|
+              |             |
+              | application |
+              |             |
+              |=============|
+ring 3          |        ^
+--------------------------------------------------------------------------------
+ring 0          |        |
+                v        |
+              |=============|
+              |             |
+          --->|   MMPM/2    |
+          |   |             |
+          |   |=============|
+          |     | IOCtls |
+SHD calls |     |        |
+to return |     |        | IDC
+buffers   |     |        |
+          |     |        |
+          |     v        v
+          |   |-------------|    OSS cmds     |-------------|
+          |   |             |   <--------->   |             |
+          ----|sblive16.sys |    irqs         |sblive32.sys |
+              |             |   ---------->   |             |
+              |-------------|                 |-------------|
+                        ^                        |
+--------------------------------------------------------------------------------
+hardware
+                   irqs |                        |
+                        |                        | hardware programming
+                      |==============|           |
+                      |              |           |
+                      | SB Live card |<-----------
+                      |              |
+                      |==============|
+
+
+The drv16 directory contains the sources for the 16 bits driver that handles
+all MMPM/2 commands and communicates (IDC) with the 32 bits core driver using
+OSS (Linux audio api) commands.
+Sblive32.sys contains a small wrapper that interprets the IDC commands and
+translates them into appriate calls to the original Linux OSS driver (ioctls/
+open/close/read/write).
+Basically, the Linux code in sblive32 treats the 16 bits driver as a Linux
+application trying to use the audio card.
+
+During the init complete strategy call of sblive16, it sends the init command
+to the 32 bits driver. Which ends up calling module_init in the Linux code
+(sblive\main.c). At this point the Linux code tries to detect the sblive
+hardware using Linux pci kernel calls.
+All Linux kernel calls are implemented in sblive32 using OS/2 system calls.
+(i.e. kmalloc uses DevHlp_VMAlloc)
+
+The original Linux SB Live! sources have not changed for the most part.
+An exception is the acknowledgment that part of a buffer has been played/
+recorded. (emu10k1_waveout_bh/emu10k1_wavein_bh in sblive\audio.c)
+OSS32_ProcessIRQ is called from those procedures to tell the 16 bits driver
+to query the current position and return/queue buffers if needed.
+
+The 16 bits driver is more or less a generic MMPM/2 driver that could be used
+(in theory) to port any OSS Linux audio driver.
+The wrapper and linux kernel calls implemented in the lib directory can
+also be reused.
+
+
+6 Difference between the two kinds of 32 bits drivers
+=====================================================
+Warp Server for e-Business (and now Warp 4 too; with fixpack 13) feature
+a new 32 bits kernel api for physical device driver (well, not entirely true).
+
+The 'standard' 32 bits driver (not compiled with KEE=1) is a 32 bits compact
+memory model driver. (cs=ds, ss!=ds; small code, large data)
+The stack is still 16 bits and the SS and DS selectors are not identical.
+Therefor all pointers are far by default. (32 bits far; meaning 16:32, 16
+bits selector, 32 bits offset)
+
+Using this memory model works fine, but is a bit inefficient and not ideal
+for porting 32 bits code (which may have hidden dependencies on the 32 bits
+flat memory model; the sblive driver has none).
+That also explains why the standard 32 bits driver is 18kb larger than the
+KEE version.
+
+The 'enhanced' 32 bits driver uses the KEE interface to create a true 32 bits
+driver (cs=ds=ss).
+
+A small 16 bits part is still needed as our IDC, strategy and irq handlers
+are expected to be in the 16 bits code segment.
+An assembly file (drv32\startup.asm) takes care of the thunking that is
+required.
+
+

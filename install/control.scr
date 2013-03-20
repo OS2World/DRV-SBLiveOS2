@@ -1,0 +1,73 @@
+/*******************************************************************************/
+/* Control script for installation of SB Live MMPM/2 audio driver              */
+/*                                                                             */
+/* Copyright 2000 Sander van Leeuwen (sandervl@xs4all.nl)                      */
+/*                                                                             */
+/*     This program is free software; you can redistribute it and/or           */
+/*     modify it under the terms of the GNU General Public License as          */
+/*     published by the Free Software Foundation; either version 2 of          */
+/*     the License, or (at your option) any later version.                     */
+/*                                                                             */
+/*     This program is distributed in the hope that it will be useful,         */
+/*     but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+/*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+/*     GNU General Public License for more details.                            */
+/*                                                                             */
+/*     You should have received a copy of the GNU General Public               */
+/*     License along with this program; if not, write to the Free              */
+/*     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,           */
+/*     USA.                                                                    */
+/*                                                                             */
+/*******************************************************************************/
+
+package="SoundBlaster Live! Audio Installation"
+codepage=437
+filelist="audfiles.scr"
+groupcount=2
+munitcount=1
+
+medianame="SoundBlaster Live! Audio Adapter Diskette "
+
+sourcedir="\\"= 0
+
+
+destindir="\\MMOS2\\DLL\\"     = 2
+destindir="\\MMOS2\\HELP\\"    = 7
+destindir="\\MMOS2\\"          = 0
+destindir="\\MMOS2\\INSTALL\\" = 4
+destindir="\\MMOS2\\MOVIES\\"  = 3
+destindir="\\MMOS2\\MACROS\\"  = 6
+destindir="\\MMOS2\\DSP\\"     = 5
+destindir="\\MMOS2\\SOUNDS\\"  = 9
+
+
+/*  Base file to be run after Audio Adapter Installed.                 */
+/*  This will update the user's Multimedia Folder with new information */
+/*  Do not change this group.                                          */
+ssgroup=0
+ssname="mmbase"
+ssversion="1.1.3"
+sstermdll="ITERM.DLL"
+sstermdllentry="ITermEntry"
+
+
+/* Audio Adapter Group                                                      */
+/* Modify this group to describe your adapter by changing the following:    */
+/*  ssgroup   - Change this number only if you add a new group.             */
+/*  ssname    - Put your adapter's name here                                */
+/*  ssversion - Put the version number of your device driver here           */
+/*  sssize    - Put the total size (in KB) of your device driver(s), help   */
+/*              file, GENIN.DLL, GENINMRI.DLL, & any other files you install*/
+/*  ssdllinputparms - this must match the ID number used in cardinfo.dll    */
+/*  ssinich   - Uncomment this line if you are adding a MIDI Map Table      */
+
+/* SoundBlaster Live! Wave Audio driver */
+ssgroup=17
+ssname="SoundBlaster Live! Wave Audio"
+ssversion="0.8.1"
+sssize=300
+ssdll="genin.dll"
+ssdllentry="InitGenin"
+ssdllinputparms="77"
+ssselect="VERSION"
+

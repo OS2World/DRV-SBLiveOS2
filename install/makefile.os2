@@ -1,0 +1,161 @@
+#******************************************************************************
+# Makefile for 32 bits OS/2 SB Live driver
+#
+# Copyright 2000 Sander van Leeuwen (sandervl@xs4all.nl)
+#
+# Modifications for C-Media 8738
+#
+# Copyright 2001 Rdiger Ihle (r.ihle@s-t.de)
+#
+#     This program is free software; you can redistribute it and/or
+#     modify it under the terms of the GNU General Public License as
+#     published by the Free Software Foundation; either version 2 of
+#     the License, or (at your option) any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public
+#     License along with this program; if not, write to the Free
+#     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+#     USA.
+#
+#******************************************************************************
+
+.ERASE
+
+.SUFFIXES:
+.SUFFIXES: .sys .obj .asm .inc .def .lrf .ref .lst .sym .map .c .cpp .rc .h .lib
+
+CINCLUDES = ..\include
+
+#PRODUCT_NAME = C-Media 8738
+PRODUCT_NAME = Soundblaster Live!
+
+RCDLL     = CARDINFO
+RCRES     = CARDINFO
+HELPFILE  = AUDHELP
+MIDIDLL   = MIDIMAP
+MIDIRES   = MIDIMAP
+
+
+#################################
+# Definitions for C Compiler
+#################################
+
+CC        = wcc386
+CFLAGS    = -i$(CINCLUDES) -wx -e25 -zq -bt=os2 -mf -bd -s -zl
+
+
+#################################
+# Definitions for linker
+#################################
+LINK      = wlink
+LFLAGS    = op c  op maxe=25  op many
+
+
+#########################################
+# Definitions for RESOURCE compiler
+#########################################
+RC        = rc
+RFLAGS    = -i $(CINCLUDES)
+
+
+#########################################
+# Definitions for Help Compiler
+#########################################
+IPF       = ipfc
+L         = ENU
+P         = 437
+C         = 1
+
+
+#################################
+# Inference Rules
+#################################
+.c.obj:
+	$(CC) $(CFLAGS) $^&.c
+
+#################################
+# Object file lists
+#################################
+
+RCOBJS = rcstub.obj
+
+#############################################################################
+# Target Descriptions
+# If you wish to create a MIDI Map, take the # off the second line below
+# and add a # to the beginning of the first line below.
+#############################################################################
+
+all: rc help
+
+# midimap
+
+
+
+##################################
+# CARDINFO.DLL Target Descriptions
+##################################
+
+rc: $(RCDLL).dll
+
+$(RCDLL).lrf: makefile.os2
+	@%write $^@ Name	$(RCDLL).DLL
+	@%write $^@ System	os2v2 dll
+	@%write $^@ Option	Description '$(PRODUCT_NAME) Installation Dll'
+	@%write $^@ File	$(RCOBJS)
+
+
+$(RCDLL).dll:   $(RCOBJS) $(RCRES).rc $(RCDLL).lrf makefile.os2
+	$(LINK) $(LFLAGS) @$(RCDLL).lrf
+        $(RC) $(RFLAGS) $(RCRES).rc $(RCDLL).dll
+	@copy $(RCDLL).dll ..\bin > nul
+	@copy control.scr ..\bin > nul
+	@copy audfiles.scr ..\bin > nul
+
+
+##################################
+# AUDHELP.HLP Target Descriptions
+##################################
+
+help: $(HELPFILE).hlp
+
+$(HELPFILE).hlp: $(HELPFILE).itl makefile.os2
+        @echo Creating file $@ > con
+        $(IPF) $(HELPFILE).itl /l=$(L) /codepage=$(P) /country=$(C)
+	@copy $(HELPFILE).hlp ..\bin > nul
+
+
+
+#############################################################################
+# MIDIMAP.DLL Target Descriptions
+# Take out the #'s at the beginning of the following lines in order to create
+# a MIDIMAP.DLL resource file.
+#############################################################################
+
+midimap: $(MIDIDLL).dll
+
+$(MIDIDLL).lrf: makefile.os2
+	@%write $^@ Name	$(MIDIDLL).DLL
+	@%write $^@ System	os2v2 dll
+	@%write $^@ Option	Description '$(PRODUCT_NAME) Midi Mapper Dll'
+	@%write $^@ File	$(RCOBJS)
+
+
+$(MIDIDLL).dll:   $(RCOBJS) $(RCRES).rc $(MIDIDLL).lrf makefile.os2
+	$(LINK) $(LFLAGS) @$(MIDIDLL).lrf
+        $(RC) $(RFLAGS) $(RCRES).rc $(MIDIDLL).dll
+	@copy $(MIDIDLL).dll ..\bin > nul
+
+
+#############################################################################
+# Cleanup directory
+#############################################################################
+
+clean:
+     del *.dll *.obj *.err *.lrf *.res *.hlp
+
+

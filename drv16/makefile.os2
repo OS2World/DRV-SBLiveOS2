@@ -1,0 +1,82 @@
+#/* SCCSID = src/dev/mme/tropez/makefile, tropez, c.basedd 97/10/22 */
+#****************************************************************************
+#*                                                                          *
+#* Copyright (c) IBM Corporation 1994 - 1997.                               *
+#*                                                                          *
+#* The following IBM OS/2 source code is provided to you solely for the     *
+#* the purpose of assisting you in your development of OS/2 device drivers. *
+#* You may use this code in accordance with the IBM License Agreement       *
+#* provided in the IBM Device Driver Source Kit for OS/2.                   *
+#*                                                                          *
+#****************************************************************************/
+#
+#- Set the environmental variables for compiling
+#
+.ERASE
+
+.SUFFIXES:
+.SUFFIXES: .sys .obj .asm .inc .def .lrf .ref .lst .sym .map .c .cpp .h .lib
+
+NAME   = sblive16
+WMAPNAME = sblive16.wmap
+
+.BEFORE
+!ifndef %WATCOM
+   set WATCOM=..\..\..\..\WATCOM
+!endif
+   set LIB=$(%DDK)\BASE\LIB
+   set INCLUDE=;.;$(%WATCOM)\H;..\runtime;$(%DDK)\BASE\SRC\DEV\RESOURCE\RMCALLS;$(%DDK)\BASE\H;$(%DDK)\BASE\SRC\INC;..\OS2Runtime;$(%DDK)\base\src\dev\mme\midi;..\include
+   set PATH=$(%DDK)\BASE\TOOLS;$(%WATCOM)\BINP;$(%WATCOM)\BINW
+
+!include ..\include\version.mak
+
+!include ..\makefile.inc
+!include ..\include\sblive16.mak
+
+#########################################
+# Object file list
+#########################################
+OBJS1=segments.obj header.obj
+OBJS2=audiohw.obj event.obj commdbg.obj
+OBJS3=
+OBJS4=idc_vdd.obj init.obj ioctl.obj irq.obj
+OBJS5=malloc.obj maudio.obj memutil.obj
+OBJS6=midimsg.obj midipars.obj midistrm.obj mpu401.obj
+OBJS7=parse.obj queue.obj rm.obj rtmidi.obj
+OBJS8=ssm_idc.obj strategy.obj stream.obj timer.obj vddentry.obj waudio.obj
+OBJS9=waveplay.obj waverec.obj wavestrm.obj dwavestrm.obj ossidc16.obj
+OBJS=$(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5) $(OBJS6) $(OBJS7) $(OBJS8) $(OBJS9)
+
+all: $(OBJDIR)\$(NAME).sys $(OBJDIR)\$(NAME).sym
+
+$(OBJDIR)\$(NAME).lrf: makefile.os2 ..\include\version.mak
+   @%write $^@ system os2 dll
+   @%write $^@ option quiet
+   @%write $^@ option verbose
+   @%write $^@ option caseexact
+   @%write $^@ option cache
+   @%write $^@ option map=$(OBJDIR)\$(WMAPNAME)
+   @%write $^@ option description '@$#$(_VENDOR):$(_VERSION)$#@'
+   @%write $^@ name $(OBJDIR)\$(NAME).sys
+   @for %f in ($(OBJS)) do @%append $^@ file $(OBJDIR)\%f
+   @%write $^@ import DOSIODELAYCNT DOSCALLS.427
+   @%write $(OBJDIR)\$(NAME).lrf library $(%DDK)\BASE\lib\os2286.lib
+   @%write $(OBJDIR)\$(NAME).lrf library $(SBLIVE_LIB)\runtime.lib
+   @%write $(OBJDIR)\$(NAME).lrf library $(%DDK)\BASE\src\dev\resource\rmcalls\rmcalls.lib
+   @%write $(OBJDIR)\$(NAME).lrf library $(%DDK)\BASE\SRC\DEV\THINKPAD\DOCKII\APMCALLS\apmcalls.lib
+   @%write $(OBJDIR)\$(NAME).lrf library $(%WATCOM)\lib286\plibs.lib
+
+$(OBJDIR)\$(NAME).sys: $(OBJS) $(OBJDIR)\$(NAME).lrf makefile.os2 $(%DDK)\BASE\lib\os2286.lib $(SBLIVE_LIB)\runtime.lib $(%DDK)\BASE\src\dev\resource\rmcalls\rmcalls.lib
+   $(LINK) @$(OBJDIR)\$(NAME).lrf
+   copy $(OBJDIR)\$(NAME).sys $(SBLIVE_BIN)
+   copy $(OBJDIR)\$(NAME).sys $(SBLIVE_BIN_)
+
+$(OBJDIR)\$(NAME).sym: $(OBJDIR)\$(WMAPNAME)
+   $(WAT2MAP) $(OBJDIR)\$(WMAPNAME) $(OBJDIR)\$(NAME).MAP
+   cd $(OBJDIR)
+   mapsym $(NAME).MAP
+   cd ..\..
+   copy $(OBJDIR)\$(NAME).sym $(SBLIVE_BIN)
+
+clean:
+     del *.obj *.err *.lnk *.sys *.sym *.lst *.map *.wmap *.lrf

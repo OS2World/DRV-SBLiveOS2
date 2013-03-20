@@ -1,0 +1,38 @@
+.*******************************************************************************
+.* File to generate SB Live driver audio installation helpfile
+.*
+.* Copyright 2000 Sander van Leeuwen (sandervl@xs4all.nl)
+.*
+.*     This program is free software; you can redistribute it and/or
+.*     modify it under the terms of the GNU General Public License as
+.*     published by the Free Software Foundation; either version 2 of
+.*     the License, or (at your option) any later version.
+.*
+.*     This program is distributed in the hope that it will be useful,
+.*     but WITHOUT ANY WARRANTY; without even the implied warranty of
+.*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.*     GNU General Public License for more details.
+.*
+.*     You should have received a copy of the GNU General Public
+.*     License along with this program; if not, write to the Free
+.*     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.*     USA.
+.*
+.*******************************************************************************
+:userdoc.
+:prolog.
+:title.SoundBlaster Live! Install Help
+:eprolog.
+:toc.
+:body.
+.******************** HELP FOR HOW MANY ADAPTERS ***********************
+:h1 res=260.Help for Selecting Number of Devices
+.*
+:p.Use this window to select the number of SoundBlaster Live! devices
+that you have installed in your system. The maximum number of SoundBlaster Live!
+devices supported by MMPM/2 is one.
+:p.
+If you select zero, then you will de-install all SoundBlaster Live! devices that have
+been previously installed by MMPM/2.
+.*********************************************************************
+:euserdoc.

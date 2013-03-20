@@ -1,0 +1,47 @@
+#
+# Set the environmental variables for compiling
+#
+.ERASE
+
+.SUFFIXES:
+.SUFFIXES: .sys .obj .asm .inc .def .lrf .ref .lst .sym .map .c .cpp .h .lib
+
+NAME   = runtime
+
+.BEFORE
+   set INCLUDE=
+!ifndef %WATCOM
+   set WATCOM=..\..\..\..\WATCOM
+!endif
+   set PATH=$(%DDK)\BASE\TOOLS;$(%WATCOM)\BINP;$(%WATCOM)\BINW
+
+INCLUDE=$(%DDK)\base\h
+INC=$(%DDK)\base\src\inc
+
+!include ..\makefile.inc
+!include ..\include\sblive16.mak
+
+# Object file list
+OBJ1=math.obj ctype.obj string.obj cpp.obj printf.obj
+OBJ2=iodelay.obj devhelp.obj
+OBJS=$(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4) $(OBJ5) $(OBJ6)
+
+all: $(OBJDIR)\$(NAME).lib
+
+##################################
+# Target descriptions
+##################################
+
+$(OBJDIR)\$(NAME).lrf: makefile.os2
+   @%write $^@ $(OBJDIR)\$(NAME).lib
+   @for %f in ($(OBJS)) do @%append $^@ -+ $(OBJDIR)\%f
+
+$(OBJDIR)\$(NAME).lib: $(OBJS) makefile.os2 $(OBJDIR)\$(NAME).lrf
+   wlib @$(OBJDIR)\$(NAME).lrf
+   copy $(OBJDIR)\$(NAME).lib $(SBLIVE_LIB)
+
+clean:
+     cd $(OBJDIR)
+     del *.obj *.err *.lnk *.sys *.sym *.lst *.map *.wmap *.lrf *.lib
+     cd ..\..
+
